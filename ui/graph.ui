@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>712</width>
+    <width>829</width>
     <height>365</height>
    </rect>
   </property>
@@ -31,7 +31,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>712</width>
+     <width>829</width>
      <height>33</height>
     </rect>
    </property>
@@ -40,6 +40,7 @@
      <string>График</string>
     </property>
     <addaction name="showHideAction"/>
+    <addaction name="clearAction"/>
    </widget>
    <addaction name="graphMenu"/>
   </widget>
@@ -71,13 +72,13 @@
      <item>
       <layout class="QVBoxLayout" name="graphListVerticalLayout">
        <property name="spacing">
-        <number>0</number>
+        <number>6</number>
        </property>
        <item>
-        <layout class="QHBoxLayout" name="stepHorizontalLayout"/>
-       </item>
-       <item>
         <layout class="QHBoxLayout" name="rangeHorizontalLayout">
+         <property name="spacing">
+          <number>10</number>
+         </property>
          <item>
           <widget class="QLabel" name="xLabel">
            <property name="font">
@@ -110,7 +111,7 @@
             <set>Qt::AlignmentFlag::AlignCenter</set>
            </property>
            <property name="placeholderText">
-            <string>[    ]</string>
+            <string>[ -10, 10, 1000 ]</string>
            </property>
            <property name="clearButtonEnabled">
             <bool>false</bool>
@@ -143,7 +144,7 @@
             <set>Qt::AlignmentFlag::AlignCenter</set>
            </property>
            <property name="placeholderText">
-            <string>[    ]</string>
+            <string>[ -10, 10 ]</string>
            </property>
           </widget>
          </item>
@@ -151,6 +152,9 @@
        </item>
        <item>
         <layout class="QHBoxLayout" name="topGraphSettingHorizontalLayout">
+         <property name="spacing">
+          <number>2</number>
+         </property>
          <item>
           <spacer name="horizontalSpacer">
            <property name="orientation">
@@ -163,6 +167,21 @@
             </size>
            </property>
           </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="clearPushButton">
+           <property name="font">
+            <font>
+             <pointsize>9</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset theme="QIcon::ThemeIcon::DocumentNew"/>
+           </property>
+          </widget>
          </item>
          <item>
           <widget class="QPushButton" name="addPushButton">
@@ -178,6 +197,9 @@
        </item>
        <item>
         <layout class="QHBoxLayout" name="graphItemParentHorizontalLayout">
+         <property name="spacing">
+          <number>2</number>
+         </property>
          <property name="sizeConstraint">
           <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
          </property>
@@ -273,6 +295,11 @@
   <action name="showHideAction">
    <property name="text">
     <string>Показать/скрыть</string>
+   </property>
+  </action>
+  <action name="clearAction">
+   <property name="text">
+    <string>Очистить</string>
    </property>
   </action>
  </widget>

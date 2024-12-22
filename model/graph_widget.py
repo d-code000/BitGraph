@@ -28,6 +28,8 @@ class GraphWidget(QMainWindow):
         layout_canvas.addWidget(NavigationToolbar(self.canvas, self))
 
         self.ui.addPushButton.clicked.connect(self.add_func_line)
+        self.ui.clearPushButton.clicked.connect(self.clear_canvas)
+        self.ui.clearAction.triggered.connect(self.clear_canvas)
         self.ui.showHideAction.triggered.connect(self.show_func_lines)
         self.ui.dockWidget.topLevelChanged.connect(self.on_dock_widget_floating)
 
@@ -102,6 +104,9 @@ class GraphWidget(QMainWindow):
         new_line_edit.setText(line_edit.text())
 
     def plot_func_line(self):
+
+        # TODO: add any input data validation
+
         objects_id = self.sender().objectName().split("_")[-1]
         line_edit = self.find_by_uuid(objects_id, QLineEdit)
 
@@ -137,7 +142,7 @@ class GraphWidget(QMainWindow):
                 x_min, x_max = x_max, x_min
 
         x = symbols('x')
-        func_str = line_edit.text()
+        func_str = line_edit.text().lower()
         func_str = func_str.replace("ctg", "1/tan")
         func_str = func_str.replace("tg", "tan")
         expr = sympify(func_str)
@@ -150,7 +155,6 @@ class GraphWidget(QMainWindow):
         x_vals = x_vals[valid_mask_y]
         y_vals = y_vals[valid_mask_y]
 
-        self.axes.clear()
         self.axes.plot(x_vals, y_vals, label=f"y = {line_edit.text()}")
 
         self.axes.axhline(0, color='black', linewidth=1, linestyle='--')
@@ -178,3 +182,7 @@ class GraphWidget(QMainWindow):
                                 child.widget().deleteLater()
                         self.ui.graphListVerticalLayout.removeItem(layout_item)
                         return
+
+    def clear_canvas(self):
+        self.axes.clear()
+        self.canvas.draw()
