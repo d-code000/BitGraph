@@ -3,6 +3,7 @@ from typing import Union, Optional, TypeVar
 
 import numpy
 from PySide6.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QHBoxLayout, QPushButton, QLabel, QLineEdit
+from matplotlib import animation
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qtagg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
@@ -17,6 +18,7 @@ class GraphWidget(QMainWindow):
     def __init__(self):
         super().__init__()
 
+        self.animation = None
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
@@ -32,11 +34,13 @@ class GraphWidget(QMainWindow):
         self.ui.clearAction.triggered.connect(self.clear_canvas)
         self.ui.showHideAction.triggered.connect(self.show_func_lines)
         self.ui.dockWidget.topLevelChanged.connect(self.on_dock_widget_floating)
+        self.ui.sinAction.triggered.connect(self.sin_animation)
 
         for widget in self.get_func_line():
             widget.setVisible(False)
 
         self.add_func_line()
+        self.sin_animation()
 
     def on_dock_widget_floating(self, floating):
         if floating:
@@ -184,5 +188,24 @@ class GraphWidget(QMainWindow):
                         return
 
     def clear_canvas(self):
+        if self.animation:
+            self.animation.event_source.stop()
         self.axes.clear()
+        self.canvas.draw()
+
+    def sin_animation(self) -> None:
+        """
+        Copy code from
+        https://matplotlib.org/stable/gallery/animation/simple_anim.html#sphx-glr-gallery-animation-simple-anim-py
+        """
+        self.axes.clear()
+        x = numpy.arange(0, 2 * numpy.pi, 0.01)
+        line, = self.axes.plot(x, numpy.sin(x))
+
+        def animate(i):
+            line.set_ydata(numpy.sin(x + i / 50))
+            return line,
+
+        self.animation = animation.FuncAnimation(self.canvas.figure, animate, interval=20, blit=True, save_count=50)
+
         self.canvas.draw()
