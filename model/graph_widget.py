@@ -1,10 +1,12 @@
 import uuid
 from typing import Union, Optional, TypeVar
 
+import numpy
 from PySide6.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QHBoxLayout, QPushButton, QLabel, QLineEdit
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qtagg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
+from sympy import sympify, lambdify, symbols
 
 from ui.migration.graph import Ui_MainWindow
 
@@ -20,16 +22,23 @@ class GraphWidget(QMainWindow):
 
         layout_canvas = QVBoxLayout(self.ui.matplotlibWidget)
 
-        canvas = FigureCanvas(Figure(figsize=(5, 3)))
-        layout_canvas.addWidget(canvas)
-        layout_canvas.addWidget(NavigationToolbar(canvas, self))
+        self.canvas = FigureCanvas(Figure(figsize=(5, 3)))
+        self.axes = self.canvas.figure.subplots()
+        layout_canvas.addWidget(self.canvas)
+        layout_canvas.addWidget(NavigationToolbar(self.canvas, self))
 
         self.ui.addPushButton.clicked.connect(self.add_func_line)
+        self.ui.showHideAction.triggered.connect(self.show_func_lines)
+        self.ui.dockWidget.topLevelChanged.connect(self.on_dock_widget_floating)
 
         for widget in self.get_func_line():
             widget.setVisible(False)
 
         self.add_func_line()
+
+    def on_dock_widget_floating(self, floating):
+        if floating:
+            self.ui.dockWidget.resize(300, 0)
 
     def find_by_uuid(self, object_uuid: str, object_type: type[T]) -> Optional[T]:
         for i in range(self.ui.graphListVerticalLayout.count()):
@@ -40,6 +49,12 @@ class GraphWidget(QMainWindow):
                     if isinstance(widget, object_type):
                         return widget
         return None
+
+    def show_func_lines(self) -> None:
+        if self.ui.dockWidget.isVisible():
+            self.ui.dockWidget.hide()
+        else:
+            self.ui.dockWidget.show()
 
     def get_func_line(self) -> tuple[QWidget, ...]:
         widgets = []
@@ -86,6 +101,22 @@ class GraphWidget(QMainWindow):
         new_line_edit = self.find_by_uuid(new_object_id, QLineEdit)
         new_line_edit.setText(line_edit.text())
 
+    def plot_func_line(self):
+        objects_id = self.sender().objectName().split("_")[-1]
+        line_edit = self.find_by_uuid(objects_id, QLineEdit)
+
+        x = symbols('x')
+        func_str = line_edit.text()
+        func_str = func_str.replace("ctg", "1/tan")
+        func_str = func_str.replace("tg", "tan")
+        expr = sympify(func_str)
+        func = lambdify(x, expr, modules=["numpy"])
+        x_vals = numpy.linspace(-10, 10, 500)
+        y_vals = func(x_vals)
+        self.axes.clear()
+        self.axes.plot(x_vals, y_vals, label=f"y = {line_edit.text()}")
+        self.canvas.draw()
+
     def delete_func_line(self):
         sender = self.sender()
         for i in range(self.ui.graphListVerticalLayout.count()):
@@ -101,6 +132,3 @@ class GraphWidget(QMainWindow):
                                 child.widget().deleteLater()
                         self.ui.graphListVerticalLayout.removeItem(layout_item)
                         return
-    
-    def plot_func_line(self):
-        pass
