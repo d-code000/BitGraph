@@ -105,16 +105,62 @@ class GraphWidget(QMainWindow):
         objects_id = self.sender().objectName().split("_")[-1]
         line_edit = self.find_by_uuid(objects_id, QLineEdit)
 
+        x_min, x_max, x_count = [-10, 10, 1000]
+        y_min, y_max = [-10, 10]
+
+        x_range = self.ui.xRangeLineEdit.text().split(',') if self.ui.xRangeLineEdit.text() else []
+        y_range = self.ui.yRangeLineEdit.text().split(',') if self.ui.yRangeLineEdit.text() else []
+
+        if len(x_range) == 1:
+            x_count = int(x_range[0])
+        elif len(x_range) == 2:
+            x_min = int(x_range[0])
+            x_max = int(x_range[1])
+            if x_min > x_max:
+                x_min, x_max = x_max, x_min
+        elif len(x_range) == 3:
+            x_min = int(x_range[0])
+            x_max = int(x_range[1])
+            x_count = int(x_range[2])
+            if x_min > x_max:
+                x_min, x_max = x_max, x_min
+            if x_count < 0:
+                x_count = -x_count
+
+        if len(y_range) == 1:
+            y_min = int(y_range[0])
+            y_max = y_min + 10
+        elif len(y_range) == 2:
+            y_min = int(y_range[0])
+            y_max = int(y_range[1])
+            if x_min > x_max:
+                x_min, x_max = x_max, x_min
+
         x = symbols('x')
         func_str = line_edit.text()
         func_str = func_str.replace("ctg", "1/tan")
         func_str = func_str.replace("tg", "tan")
         expr = sympify(func_str)
+
         func = lambdify(x, expr, modules=["numpy"])
-        x_vals = numpy.linspace(-10, 10, 500)
+        x_vals = numpy.linspace(x_min, x_max, x_count)
         y_vals = func(x_vals)
+
+        valid_mask_y = (y_vals >= y_min) & (y_vals <= y_max)
+        x_vals = x_vals[valid_mask_y]
+        y_vals = y_vals[valid_mask_y]
+
         self.axes.clear()
         self.axes.plot(x_vals, y_vals, label=f"y = {line_edit.text()}")
+
+        self.axes.axhline(0, color='black', linewidth=1, linestyle='--')
+        self.axes.axvline(0, color='black', linewidth=1, linestyle='--')
+
+        self.axes.set_xlim([x_min, x_max])
+        self.axes.set_ylim([y_min, y_max])
+
+        self.axes.grid(True)
+        self.axes.legend()
         self.canvas.draw()
 
     def delete_func_line(self):

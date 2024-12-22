@@ -74,6 +74,82 @@
         <number>0</number>
        </property>
        <item>
+        <layout class="QHBoxLayout" name="stepHorizontalLayout"/>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="rangeHorizontalLayout">
+         <item>
+          <widget class="QLabel" name="xLabel">
+           <property name="font">
+            <font>
+             <pointsize>16</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>x ∊ </string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="xRangeLineEdit">
+           <property name="font">
+            <font>
+             <pointsize>16</pointsize>
+            </font>
+           </property>
+           <property name="layoutDirection">
+            <enum>Qt::LayoutDirection::LeftToRight</enum>
+           </property>
+           <property name="autoFillBackground">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+           <property name="placeholderText">
+            <string>[    ]</string>
+           </property>
+           <property name="clearButtonEnabled">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="yLabel_2">
+           <property name="font">
+            <font>
+             <pointsize>16</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>y ∊ </string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="yRangeLineEdit">
+           <property name="font">
+            <font>
+             <pointsize>16</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+           <property name="placeholderText">
+            <string>[    ]</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
         <layout class="QHBoxLayout" name="topGraphSettingHorizontalLayout">
          <item>
           <spacer name="horizontalSpacer">
@@ -106,7 +182,7 @@
           <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
          </property>
          <item>
-          <widget class="QLabel" name="yLable">
+          <widget class="QLabel" name="yLabel">
            <property name="enabled">
             <bool>true</bool>
            </property>
